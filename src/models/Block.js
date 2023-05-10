@@ -6,7 +6,7 @@ export const DIFFICULTY = 2
 /*
  * @Author: 南宫
  * @Date: 2023-05-05 21:45:55
- * @LastEditTime: 2023-05-06 22:12:24
+ * @LastEditTime: 2023-05-10 22:01:49
  */
 
 class Block {
@@ -26,7 +26,7 @@ class Block {
     this.blockchain = blockchain
     this.previousHash = previousHash
     this.height = height
-    this.timestamp = timestamp //输出时间戳
+    this.timestamp = timestamp //输出时间 戳
     this.hash = this.calculateHash()
 
   }
