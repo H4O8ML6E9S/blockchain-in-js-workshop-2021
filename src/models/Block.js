@@ -26,7 +26,7 @@ class Block {
     this.blockchain = blockchain
     this.previousHash = previousHash
     this.height = height
-    this.timestamp = timestamp //输出时间 戳
+    this.timestamp = timestamp //输出时间戳
     this.hash = this.calculateHash()
 
   }

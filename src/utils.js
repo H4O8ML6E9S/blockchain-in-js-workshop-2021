@@ -1,6 +1,11 @@
+/*
+ * @Author: 南宫
+ * @Date: 2023-05-10 21:24:47
+ * @LastEditTime: 2023-05-10 22:07:15
+ */
 import sha256 from 'crypto-js/sha256.js'
 
-export const validateHash = () => {}
+export const validateHash = () => { }
 
 export const calcNonce = (block) => {
   console.log(`calc nonce of block ${block.height} `)

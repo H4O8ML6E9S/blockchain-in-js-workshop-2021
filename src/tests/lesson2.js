@@ -64,7 +64,7 @@ const main = () => {
     sha256(new Date().getTime().toString()).toString(),
   )
 
-  
+
   thirdBlock = calcNonce(thirdBlock)
 
   blockchain.blocks[thirdBlock.hash] = thirdBlock
