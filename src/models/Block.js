@@ -12,7 +12,15 @@ export const DIFFICULTY = 2
 class Block {
   // 1. 完成构造函数及其参数
   /* 构造函数需要包含
-    
+        Block 构造及其函数
+    补充 Block 中的函数
+    验证区块是否符合挖矿难度要求
+    添加更新 Nonce 函数
+    添加更新 Hash 函数
+    添加 isValid 函数
+    掌握并实现区块 Hash 的计算
+    区块 Hash 的计算
+    统计⽐特币每个区块的挖矿时间及其概率分布(⾄少⼗个区块)并记录
   */
   constructor(blockchain, previousHash, height, timestamp) {
     this.blockchain = blockchain
@@ -22,10 +30,6 @@ class Block {
     this.hash = this.calculateHash()
 
   }
-
-  // 1. 完成构造函数及其参数
-
-  constructor() { }
 
   isValid () { }
 
