@@ -1,3 +1,8 @@
+/*
+ * @Author: 南宫
+ * @Date: 2023-05-12 21:25:41
+ * @LastEditTime: 2023-05-18 17:13:36
+ */
 import Block, { DIFFICULTY } from '../models/Block.js'
 import Blockchain from '../models/Blockchain.js'
 import sha256 from 'crypto-js/sha256.js'
@@ -31,7 +36,8 @@ const main = () => {
 
   console.assert(newBlock.isValid() == true, 'Error: Very low probability')
 
-  blockchain.blocks[newBlock.hash] = newBlock
+  // blockchain.blocks[newBlock.hash] = newBlock //老师的
+  blockchain.blocks.set(newBlock.hash, newBlock)
 
   let nextBlock = new Block(
     blockchain,
@@ -50,8 +56,12 @@ const main = () => {
   nextBlock = calcNonce(nextBlock)
   nextCompetitionBlock = calcNonce(nextCompetitionBlock)
   // 添加两个区块高度为 2  的的竞争区块
-  blockchain.blocks[nextBlock.hash] = nextBlock
-  blockchain.blocks[nextCompetitionBlock.hash] = nextCompetitionBlock
+  // blockchain.blocks[nextBlock.hash] = nextBlock //老师的
+  blockchain.blocks.set(nextBlock.hash, nextBlock)
+
+
+  // blockchain.blocks[nextCompetitionBlock.hash] = nextCompetitionBlock //老师的
+  blockchain.blocks.set(nextCompetitionBlock.hash, nextCompetitionBlock)
 
   let longestChain = blockchain.longestChain()
 
@@ -64,10 +74,12 @@ const main = () => {
     sha256(new Date().getTime().toString()).toString(),
   )
 
-  
+
   thirdBlock = calcNonce(thirdBlock)
 
-  blockchain.blocks[thirdBlock.hash] = thirdBlock
+  // blockchain.blocks[thirdBlock.hash] = thirdBlock //老师的
+  blockchain.blocks.set(thirdBlock.hash, thirdBlock)
+
 
   longestChain = blockchain.longestChain()
 
@@ -77,6 +89,10 @@ const main = () => {
     longestChain[2].hash == thirdBlock.hash,
     `Height block hash should be ${thirdBlock.hash}`,
   )
+
+  // test
+  longestChain = blockchain.longestChain()
+  console.log(longestChain);
 }
 
 main()
