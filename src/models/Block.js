@@ -1,7 +1,7 @@
 /*
  * @Author: 南宫
  * @Date: 2023-05-05 21:45:55
- * @LastEditTime: 2023-06-01 18:50:19
+ * @LastEditTime: 2023-06-01 19:26:12
  */
 import sha256 from 'crypto-js/sha256.js'
 import UTXO from './UTXO.js'
@@ -24,7 +24,7 @@ class Block {
     this.coinbaseBeneficiary = coinbaseBeneficiary //区块奖励接收地址(矿工地址)
     this.utxoPool = new UTXOPool()
 
-    this.transactions = []
+    // this.transactions = []
   }
 
   /* 验证当前区块是否有效 */

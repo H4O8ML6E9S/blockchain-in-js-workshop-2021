@@ -1,10 +1,10 @@
 /*
  * @Author: 南宫
  * @Date: 2023-05-18 18:20:41
- * @LastEditTime: 2023-05-31 23:11:25
+ * @LastEditTime: 2023-06-01 19:39:55
  */
 import UTXO from './UTXO.js'
-
+import sha256 from 'crypto-js/sha256.js'
 class UTXOPool {
   constructor(utxos = {}) {
     this.utxos = utxos; // UTXO映射 accounting -> UTXO(s)
@@ -15,11 +15,13 @@ class UTXOPool {
    * 将交易的信息更新至 UTXOPool 中
    */
   addUTXO (publicKey, amount) {
-    if (this.utxos[publicKey]) {//如果该账户已存在则交易叠加
+    // 先检查 publicKey 对应的 UTXO 是否已存在 Map 中
+    if (publicKey in this.utxos) {
+      // 如果已存在，直接给该 UTXO 里的 amount 属性添加新的值
       this.utxos[publicKey].amount += amount
     } else {
-      const u = new UTXO(amount)
-      this.utxos[publicKey] = u
+      // 如果不存在，用新的 UTXO 对象添加到 Map 中
+      this.utxos[publicKey] = new UTXO(amount)
     }
   }
 
@@ -30,23 +32,25 @@ class UTXOPool {
 
   // 处理交易函数
   handleTransaction (transaction) {
-    // 遍历交易中的输入，将对应的 UTXO 删去
-    for (let i = 0; i < transaction.inputs.length; i++) {
-      const input = transaction.inputs[i]
-      const utxoKey = input.previousTxHash + '_' + input.outputIndex
-      if (this.utxos[utxoKey]) {
-        delete this.utxos[utxoKey]
-      } else {
-        throw new Error('Error: UTXO not exists')
-      }
+    let senderPublicKey = transaction.senderPublicKey
+    let amount = transaction.amount
+
+    // 检查 senderPublicKey 对应的 UTXO 是否存在
+    let senderUTXO = this.utxos[senderPublicKey]
+    if (!(senderPublicKey in this.utxos) || senderUTXO.amount < amount) {
+      // throw new Error("Transaction is invalid! No enough UTXO!");
+      return false
     }
-    // 遍历交易中的输出，将对应的 UTXO 添加进映射表中
-    for (let i = 0; i < transaction.outputs.length; i++) {
-      const output = transaction.outputs[i]
-      const txHash = transaction.hash
-      const utxo = new UTXO(txHash, transaction, i)
-      this.utxos[txHash + '_' + i] = utxo
+
+    // 更新 senderPublicKey 的UTXO
+    senderUTXO.amount -= amount;
+    if (senderUTXO.amount === 0) {
+      delete this.utxos[senderPublicKey];
     }
+
+    // 增加 receiverPublicKey 的UTXO
+    let receiverPublicKey = transaction.receiverPublicKey;
+    this.addUTXO(receiverPublicKey, amount);
   }
 
   // 验证交易合法性
@@ -54,65 +58,12 @@ class UTXOPool {
    * 验证余额
    * 返回 bool 
    */
-  isValidTransaction (transaction) {
-    let inputAmount = 0
-    let outputAmount = 0
-    // 判断每个输入是否是一个未曾被使用的 UTXO，并计算输入金额
-    for (let i = 0; i < transaction.inputs.length; i++) {
-      const input = transaction.inputs[i]
-      const utxoKey = input.previousTxHash + '_' + input.outputIndex
-      const utxo = this.utxos[utxoKey]
-      if (!utxo) {
-        throw new Error('Error: Invalid transaction')
-      }
-      if (utxo.txOutput.address !== input.address) {
-        throw new Error('Error: Invalid transaction')
-      }
-      inputAmount += utxo.amount
+  isValidTransaction (senderPublicKey, amount) {
+    let utxo = this.utxos[senderPublicKey];
+    if (!utxo || utxo.amount < amount) {
+      return false;
     }
-    // 计算输出金额
-    for (let i = 0; i < transaction.outputs.length; i++) {
-      const output = transaction.outputs[i]
-      if (output.amount <= 0) {
-        throw new Error('Error: Invalid transaction')
-      }
-      outputAmount += output.amount
-    }
-    // 验证交易是否超支
-    if (outputAmount > inputAmount) {
-      throw new Error('Error: Invalid transaction')
-    }
-    // 验证通过，返回 true
-    return true
+    return true;
   }
 }
-
 export default UTXOPool
-/* 
-import UTXO from './UTXO.js'
-
-class UTXOPool {
-
-  
-
-  handleTransaction(transaction) {
-    const sender = this.utxos[transaction.senderPublicKey]
-    const receiver = this.utxos[transaction.receiverPublicKey]
-
-    if (sender && receiver && sender.amount >= transaction.amount) {
-      sender.amount -= transaction.amount
-      receiver.amount += transaction.amount
-      this.utxos[transaction.senderPublicKey] = sender
-      this.utxos[transaction.receiverPublicKey] = receiver
-    }
-  }
-
-  isValidTransaction(senderPublicKey, amount) {
-    const sender = this.utxos[senderPublicKey]
-    return sender && sender.amount >= amount
-  }
-}
-
-export default UTXOPool
-
-*/

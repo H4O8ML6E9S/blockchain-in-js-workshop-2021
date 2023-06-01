@@ -111,6 +111,7 @@ const main = () => {
 
   assert(trx._calculateHash() == trx.hash, 'Error: Trx hash invalid')
 
+
   assert(
     latestUTXOPool.isValidTransaction(miner, 1) == true,
     'Error: trx need to be validate',
@@ -125,7 +126,7 @@ const main = () => {
 
   assert(
     latestUTXOPool.utxos[receiverPubKey] &&
-      latestUTXOPool.utxos[receiverPubKey].amount == 1,
+    latestUTXOPool.utxos[receiverPubKey].amount == 1,
     'Error: receiver should got right balance',
   )
 
@@ -147,7 +148,7 @@ const main = () => {
 
   assert(
     latestUTXOPool.utxos[receiverPubKey] &&
-      latestUTXOPool.utxos[receiverPubKey].amount == 1,
+    latestUTXOPool.utxos[receiverPubKey].amount == 1,
     'Error: receiver should got right balance',
   )
 }
