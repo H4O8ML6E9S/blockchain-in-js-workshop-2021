@@ -14,6 +14,8 @@ const main = () => {
 
   // 设置创世区块
   blockchain.genesis = genesisBlock
+  blockchain._addBlock(genesisBlock) //添加创世区块
+
 
   // 验证区块难度
   console.assert(DIFFICULTY > 0, 'Error: Need config DIFFICULTY on Block file')
@@ -87,13 +89,13 @@ const main = () => {
   console.log(thirdBlock.utxoPool)
   console.assert(
     thirdBlock.utxoPool.utxos[miner] &&
-      thirdBlock.utxoPool.utxos[miner].amount > 0,
+    thirdBlock.utxoPool.utxos[miner].amount > 0,
     'Error: miner should got BTC',
   )
 
   console.assert(
     thirdBlock.utxoPool.utxos[miner] &&
-      thirdBlock.utxoPool.utxos[miner].amount == 37.5,
+    thirdBlock.utxoPool.utxos[miner].amount == 37.5,
     'Error: miner should got BTC',
   )
 }
