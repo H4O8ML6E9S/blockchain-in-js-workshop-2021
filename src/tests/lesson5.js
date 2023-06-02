@@ -1,7 +1,6 @@
 import Block, { DIFFICULTY } from '../models/Block.js'
 import Blockchain from '../models/Blockchain.js'
 import Transaction from '../models/Transaction.js'
-
 import sha256 from 'crypto-js/sha256.js'
 import { calcNonce, validateHash } from '../utils.js'
 
@@ -127,7 +126,7 @@ const main = () => {
 
   assert(
     latestUTXOPool.utxos[receiverPubKey] &&
-      latestUTXOPool.utxos[receiverPubKey].amount == 1,
+    latestUTXOPool.utxos[receiverPubKey].amount == 1,
     'Error: receiver should got right balance',
   )
 
@@ -135,12 +134,14 @@ const main = () => {
   log(latestUTXOPool)
 
   let badTrx = new Transaction(miner, receiverPubKey, 100)
-  
+
   // 对比更新交易之后的 hash 数据
-  let trxHash = thirdBlock.combinedTransactionsHash().toString()
+  // let trxHash = thirdBlock.combinedTransactionsHash().toString()
+  let trxHash = thirdBlock.combinedTransactionsHash()
   thirdBlock.addTransaction(badTrx)
 
-  assert(trxHash != thirdBlock.combinedTransactionsHash().toString(), 'Error: new trx cannot have same hash')
+  // assert(trxHash != thirdBlock.combinedTransactionsash().toString(), 'Error: new trx cannot have same hash')
+  assert(trxHash != thirdBlock.combinedTransactionsHash(), 'Error: new trx cannot have same hash')
 
   assert(
     latestUTXOPool.utxos[miner] && latestUTXOPool.utxos[miner].amount == 36.5,
@@ -154,7 +155,7 @@ const main = () => {
 
   assert(
     latestUTXOPool.utxos[receiverPubKey] &&
-      latestUTXOPool.utxos[receiverPubKey].amount == 1,
+    latestUTXOPool.utxos[receiverPubKey].amount == 1,
     'Error: receiver should got right balance',
   )
 }
