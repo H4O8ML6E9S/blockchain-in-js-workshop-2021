@@ -1,68 +1,64 @@
-/*
- * @Author: 南宫
- * @Date: 2023-05-18 18:20:41
- * @LastEditTime: 2023-06-01 20:26:21
- */
 import UTXO from './UTXO.js'
+import {clone, values} from "ramda";
 class UTXOPool {
   constructor(utxos = {}) {
-    this.utxos = utxos; // UTXO映射 accounting -> UTXO(s)
+    this.utxos=utxos
   }
+
 
   // 添加交易函数
   /**
    * 将交易的信息更新至 UTXOPool 中
    */
-  addUTXO (publicKey, amount) {
-    // 先检查 publicKey 对应的 UTXO 是否已存在 Map 中
-    if (publicKey in this.utxos) {
-      // 如果已存在，直接给该 UTXO 里的 amount 属性添加新的值
+  addUTXO(publicKey,amount) {
+    if (this.utxos[publicKey]){
       this.utxos[publicKey].amount += amount
-    } else {
-      // 如果不存在，用新的 UTXO 对象添加到 Map 中
-      this.utxos[publicKey] = new UTXO(amount)
     }
+    else {
+      const newUtxo = new UTXO(publicKey,amount)
+      this.utxos[publicKey] = newUtxo
+    }
+
   }
 
   // 将当前 UXTO 的副本克隆
-  clone () {
-    return new UTXOPool(JSON.parse(JSON.stringify(this.utxos)))
+  clone() {
+    return new UTXOPool(clone(this.utxos))
   }
 
+
+
+
+
   // 处理交易函数
-  handleTransaction (transaction) {
-    let senderPublicKey = transaction.senderPublicKey
-    let amount = transaction.amount
-
-    // 检查 senderPublicKey 对应的 UTXO 是否存在
-    let senderUTXO = this.utxos[senderPublicKey]
-    if (!(senderPublicKey in this.utxos) || senderUTXO.amount < amount) {
-      // throw new Error("Transaction is invalid! No enough UTXO!");
-      return false
+  handleTransaction(transaction) {
+    if (!this.isValidTransaction(transaction.inputPublicKey,transaction.value)){
+      return
     }
-
-    // 更新 senderPublicKey 的UTXO
-    senderUTXO.amount -= amount;
-    if (senderUTXO.amount === 0) {
-      delete this.utxos[senderPublicKey];
+    const inUtxo = this.utxos[transaction.inputPublicKey]
+    inUtxo.amount -= transaction.value
+    if (inUtxo.amount <=0){
+      delete this.utxos[transaction.inputPublicKey]
     }
+    this.addUTXO(transaction.outputPublicKey,transaction.value)
 
-    // 增加 receiverPublicKey 的UTXO
-    let receiverPublicKey = transaction.receiverPublicKey;
-    this.addUTXO(receiverPublicKey, amount);
   }
 
   // 验证交易合法性
   /**
    * 验证余额
-   * 返回 bool 
+   * 返回 bool
    */
-  isValidTransaction (senderPublicKey, amount) {
-    let utxo = this.utxos[senderPublicKey];
-    if (!utxo || utxo.amount < amount) {
-      return false;
+  isValidTransaction(inputPublicKey,value) {
+    const Utxo = this.utxos[inputPublicKey]
+    if (Utxo == undefined){
+      return false
     }
-    return true;
+    else {
+      return Utxo.amount >= value && value > 0
+    }
   }
+
 }
+
 export default UTXOPool
