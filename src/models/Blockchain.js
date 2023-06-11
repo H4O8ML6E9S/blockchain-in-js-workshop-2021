@@ -1,41 +1,112 @@
-import UTXOPool from './UTXOPool.js'
-
+/*
+ * @Author: 南宫
+ * @Date: 2023-05-05 21:45:55
+ * @LastEditTime: 2023-06-11 10:33:01
+ */
+// Blockchain
 class Blockchain {
   // 1. 完成构造函数及其参数
-  /* 构造函数需要包含
+  /* 构造函数需要包含 
       - 名字
       - 创世区块
       - 存储区块的映射
   */
-  constructor() {}
+  constructor(name) {
+    this.name = name
+    this.genesis = null
+    this.blocks = new Map()
+  }
 
   // 2. 定义 longestChain 函数
-  /*
+  /* 
     返回当前链中最长的区块信息列表
   */
-  longestChain() {
-    return []
+  longestChain () {
+    // let longestChain = [];
+    // for (const [hash, block] of this.blocks) { //解构赋值
+    //   const chain = [block];
+    //   let previousBlock = block;
+    //   while (this.blocks.has(previousBlock.previousHash) && (this.blocks.has(previousBlock.previousHash)).has !== 'root') {
+    //     previousBlock = this.blocks.get(previousBlock.previousHash);
+    //     chain.unshift(previousBlock);
+    //   }
+    //   if (chain.length > longestChain.length) {
+    //     longestChain = chain;
+    //   }
+    // }
+    // return longestChain;
+
+    let longestChain = [];
+    let keys = Object.keys(this.blocks)
+    let max = 0
+    let key_value = 0
+    for (const key of keys) {
+      if (max < this.blocks[key].height) {
+        max = this.blocks[key].height
+        key_value = key
+      }
+    }
+    while (key_value != this.genesis.hash) {
+      longestChain.unshift(this.blocks[key_value])
+      key_value = this.blocks[key_value].previousHash
+
+    }
+    return longestChain;
   }
 
   // 判断当前区块链是否包含
-  containsBlock(block) {
+  containsBlock (block) {
     // 添加判断方法
+    let blockss = block.blockchain.blocks
+    let keys = Object.keys(blockss)
+    for (let key of keys) {
+      if (key == block.hash) {
+        return true
+      }
+    }
     return false
   }
 
   // 获得区块高度最高的区块
-  maxHeightBlock() {
-    // return Block
+  maxHeightBlock () {
+    let maxHeightBlock = null;
+    for (const [hash, block] of this.blocks) {
+      if (!maxHeightBlock || block.height > maxHeightBlock.height) {
+        maxHeightBlock = block;
+      }
+    }
+    return maxHeightBlock;
   }
 
   // 添加区块
   /*
-
+  先判断区块合法性是否满足
+  然后判断是否已存在
+  如果都满足就添加进 blocks 中
   */
-  _addBlock(block) {
+  _addBlock (block) {
     if (!block.isValid()) return
     if (this.containsBlock(block)) return
+    this.blocks[block.hash] = block
+
+    // 添加 UTXO 快照与更新的相关逻辑（UTXOPool）
+    // 更新 UTXOPool
+    if (block.previousHash == this.genesis.hash) {  //如果区块是root，添加交易
+      block.utxoPool.addUTXO(block.coinbaseBeneficiary, 12.5)
+    }
+    if (block.previousHash == this.genesis.hash) { //如果是其他区块，交易是父区快的克隆
+      block.utxoPool = this.genesis.utxoPool.clone()
+      block.utxoPool.addUTXO(block.coinbaseBeneficiary, 12.5)
+    } else {
+      block.utxoPool = block.blockchain.blocks[block.previousHash].utxoPool.clone()
+      if (block.coinbaseBeneficiary != undefined) {       //本区块还有交易，再加
+        block.utxoPool.addUTXO(block.coinbaseBeneficiary, 12.5)
+      } else {
+        block.utxoPool.addUTXO(block.blockchain.blocks[block.previousHash].coinbaseBeneficiary, 12.5)
+      }
+    }
   }
 }
+
 
 export default Blockchain
