@@ -134,7 +134,7 @@ const main = () => {
 
   assert(
     latestUTXOPool.utxos[receiverPubKey] &&
-      latestUTXOPool.utxos[receiverPubKey].amount == 1,
+    latestUTXOPool.utxos[receiverPubKey].amount == 1,
     'Error: receiver should got right balance',
   )
 
@@ -159,7 +159,7 @@ const main = () => {
 
   assert(
     latestUTXOPool.utxos[receiverPubKey] &&
-      latestUTXOPool.utxos[receiverPubKey].amount == 1,
+    latestUTXOPool.utxos[receiverPubKey].amount == 1,
     'Error: receiver should got right balance',
   )
 
@@ -170,7 +170,7 @@ const main = () => {
 
   assert(
     latestUTXOPool.utxos[receiverPubKey] &&
-      latestUTXOPool.utxos[receiverPubKey].amount == 0.89,
+    latestUTXOPool.utxos[receiverPubKey].amount == 0.89,
     'Error: receiver should got right balance',
   )
 

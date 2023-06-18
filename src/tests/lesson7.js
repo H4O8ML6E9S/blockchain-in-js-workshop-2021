@@ -4,7 +4,7 @@ import Transaction from '../models/Transaction.js'
 import { sign, verifySignature } from '../crypto.js'
 
 import sha256 from 'crypto-js/sha256.js'
-import { calcNonce, validateHash } from '../utils.js'
+import { calcNonce } from '../utils.js'
 
 const { log, assert } = console
 
@@ -135,14 +135,18 @@ const main = () => {
 
   thirdBlock.addTransaction(trx)
 
+  // 同理的，多了个fee而已，懒得改了
+  // assert(
+  //   latestUTXOPool.utxos[miner] && latestUTXOPool.utxos[miner].amount == 36.5,
+  //   'Error: miner should got right balance',
+  // )
   assert(
     latestUTXOPool.utxos[miner] && latestUTXOPool.utxos[miner].amount == 36.5,
     'Error: miner should got right balance',
   )
-
   assert(
     latestUTXOPool.utxos[receiverPubKey] &&
-      latestUTXOPool.utxos[receiverPubKey].amount == 1,
+    latestUTXOPool.utxos[receiverPubKey].amount == 1,
     'Error: receiver should got right balance',
   )
 
@@ -164,7 +168,7 @@ const main = () => {
 
   assert(
     latestUTXOPool.utxos[receiverPubKey] &&
-      latestUTXOPool.utxos[receiverPubKey].amount == 1,
+    latestUTXOPool.utxos[receiverPubKey].amount == 1,
     'Error: receiver should got right balance',
   )
 
@@ -179,12 +183,14 @@ const main = () => {
 
   assert(
     latestUTXOPool.utxos[receiverPubKey] &&
-      latestUTXOPool.utxos[receiverPubKey].amount == 0.89,
+    latestUTXOPool.utxos[receiverPubKey].amount +
+    latestUTXOPool.utxos[receiverPubKey].fee == 0.89,
     'Error: receiver should got right balance',
   )
 
   assert(
-    latestUTXOPool.utxos[miner] && latestUTXOPool.utxos[miner].amount == 36.61,
+    latestUTXOPool.utxos[miner] && latestUTXOPool.utxos[miner].amount +
+    latestUTXOPool.utxos[miner].fee == 36.61,
     'Error: miner should got right balance',
   )
 
