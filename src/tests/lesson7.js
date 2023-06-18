@@ -168,11 +168,6 @@ const main = () => {
     'Error: receiver should got right balance',
   )
 
-
-  // 自己加的
-  latestUTXOPool = thirdBlock.utxoPool
-  log(latestUTXOPool)
-
   // check fee change
 
   let newTrx = new Transaction(receiverPubKey, miner, 0.1, 0.01)
