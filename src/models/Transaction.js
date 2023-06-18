@@ -1,7 +1,7 @@
 /*
  * @Author: 南宫
  * @Date: 2023-05-21 11:03:37
- * @LastEditTime: 2023-06-18 12:20:13
+ * @LastEditTime: 2023-06-18 13:55:57
  */
 import sha256 from 'crypto-js/sha256.js'
 import { generatePair, sign, verifySignature } from '../crypto.js'
@@ -47,7 +47,7 @@ class Transaction {
       return false;
     }
     // 验证交易金额是否非负
-    if (this.amount <= 0 || this.fee + this.amount < 0) { // 新增对fee属性的非负判断
+    if (this.amount < 0 || this.fee + this.amount < 0) { // 新增对fee属性的非负判断
       return false;
     }
     // 验证交易哈希是否正确

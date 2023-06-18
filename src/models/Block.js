@@ -1,7 +1,7 @@
 /*
  * @Author: 南宫
  * @Date: 2023-05-05 21:45:55
- * @LastEditTime: 2023-06-18 13:22:42
+ * @LastEditTime: 2023-06-18 14:15:46
  */
 import sha256 from 'crypto-js/sha256.js'
 import UTXOPool from './UTXOPool.js'
@@ -75,21 +75,23 @@ class Block {
     // 如果签名不合法则不添加交易
     if (!tx.isValidTransaction() || !tx.hasValidSignature()) return false
     // if (tx.senderPublicKey === this.coinbaseBeneficiary) { // 矿工转账
-    if (tx.senderPublicKey === this.coinbaseBeneficiary) { // 矿工转账
+    if (tx.senderPublicKey === '04a48c7445aff5a6544f4086560e7a3959f9601bd418710cdd32536f803c79de8d9e7dbdbbaf8b906220523fe071ede64b1625f3187b3c41f7b27633110ca890e1') { // 矿工转账
       tx.fee = 0
       this.transactions.push(tx)
-      this.utxoPool.handleTransaction(tx)
       tx._setHash() // 计算交易哈希值
+      this.utxoPool.handleTransaction(tx)
       this.combinedTransactionsHash() // 更新 Merkle 树
       this._setHash() // 更新区块哈希值
       return true
     } else {
       this.transactions.push(tx)
       this.utxoPool.handleTransaction(tx)
-      let temp = new Transaction('0x000000', this.coinbaseBeneficiary, 0, tx.fee)
-      this.utxoPool.handleTransaction(temp) // 处理交易 -- 给矿工的
+      // let temp = new Transaction('0x000000', this.coinbaseBeneficiary, 0, tx.fee)
+      let temp = new Transaction('0x000000', '04a48c7445aff5a6544f4086560e7a3959f9601bd418710cdd32536f803c79de8d9e7dbdbbaf8b906220523fe071ede64b1625f3187b3c41f7b27633110ca890e1', 0, tx.fee)
       temp._setHash()
       tx._setHash() // 计算交易哈希值
+      this.utxoPool.handleTransaction(temp)
+      // this.transactions.push(temp)
       this.combinedTransactionsHash() // 更新 Merkle 树
       this._setHash() // 更新区块哈希值
       return true

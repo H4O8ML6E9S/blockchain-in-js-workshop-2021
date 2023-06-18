@@ -136,10 +136,6 @@ const main = () => {
   thirdBlock.addTransaction(trx)
 
   // 同理的，多了个fee而已，懒得改了
-  // assert(
-  //   latestUTXOPool.utxos[miner] && latestUTXOPool.utxos[miner].amount == 36.5,
-  //   'Error: miner should got right balance',
-  // )
   assert(
     latestUTXOPool.utxos[miner] && latestUTXOPool.utxos[miner].amount == 36.5,
     'Error: miner should got right balance',
@@ -172,6 +168,11 @@ const main = () => {
     'Error: receiver should got right balance',
   )
 
+
+  // 自己加的
+  latestUTXOPool = thirdBlock.utxoPool
+  log(latestUTXOPool)
+
   // check fee change
 
   let newTrx = new Transaction(receiverPubKey, miner, 0.1, 0.01)
@@ -191,7 +192,7 @@ const main = () => {
   assert(
     latestUTXOPool.utxos[miner] && latestUTXOPool.utxos[miner].amount +
     latestUTXOPool.utxos[miner].fee == 36.61,
-    'Error: miner should got right balance',
+    'Error: miner should got right balance1',
   )
 
   log(latestUTXOPool)

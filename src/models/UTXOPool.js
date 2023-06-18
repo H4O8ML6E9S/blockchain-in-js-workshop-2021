@@ -1,7 +1,7 @@
 /*
  * @Author: 南宫
  * @Date: 2023-05-18 18:20:41
- * @LastEditTime: 2023-06-18 13:25:19
+ * @LastEditTime: 2023-06-18 14:16:30
  */
 import UTXO from './UTXO.js'
 class UTXOPool {
@@ -37,6 +37,9 @@ class UTXOPool {
 
     // 检查 senderPublicKey 对应的 UTXO 是否存在
     let senderUTXO = this.utxos[senderPublicKey];
+    if (senderPublicKey == '0x000000') {
+      senderUTXO = this.utxos[transaction.receiverPublicKey];
+    }
 
     if (senderPublicKey === '0x000000') { //给矿工奖励fee
       // 增加 receiverPublicKey 的UTXO
