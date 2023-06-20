@@ -1,11 +1,12 @@
 /*
  * @Author: 南宫
  * @Date: 2023-05-18 18:20:41
- * @LastEditTime: 2023-06-11 10:33:16
+ * @LastEditTime: 2023-06-20 16:52:15
  */
 export default class UTXO {
-  constructor(amount, fee = 0) {
-    this.amount = amount
-    this.fee = fee
+  constructor(account, fee = 0) {
+    this.fee = fee // 手续费
+    this.account = account // 
+    this.amount = account + fee // 总的
   }
 }

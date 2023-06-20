@@ -127,7 +127,7 @@ const main = () => {
 
   assert(
     latestUTXOPool.utxos[receiverPubKey] &&
-      latestUTXOPool.utxos[receiverPubKey].amount == 1,
+    latestUTXOPool.utxos[receiverPubKey].amount == 1,
     'Error: receiver should got right balance',
   )
 
@@ -135,7 +135,7 @@ const main = () => {
   log(latestUTXOPool)
 
   let badTrx = new Transaction(miner, receiverPubKey, 100)
-  
+
   // 对比更新交易之后的 hash 数据
   let trxHash = thirdBlock.combinedTransactionsHash().toString()
   thirdBlock.addTransaction(badTrx)
@@ -154,7 +154,7 @@ const main = () => {
 
   assert(
     latestUTXOPool.utxos[receiverPubKey] &&
-      latestUTXOPool.utxos[receiverPubKey].amount == 1,
+    latestUTXOPool.utxos[receiverPubKey].amount == 1,
     'Error: receiver should got right balance',
   )
 }
